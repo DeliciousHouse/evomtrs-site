@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="EVOMTRS favicon">
+  <rect width="64" height="64" rx="10" fill="#0B0D10"/>
+  <path d="M8 46 L56 46" stroke="#B5121B" stroke-width="4"/>
+  <text x="50%" y="54%" text-anchor="middle" fill="#F3F4F1" font-size="20" font-family="Georgia,serif" font-weight="700" letter-spacing="2">EV</text>
+</svg>

@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Contact | EVOMTRS — Project intake</title>
+  <meta name="description" content="Start a Mercedes or AMG project intake with EVOMTRS. Call, text, or submit the form. Reply within one business day." />
+  <link rel="canonical" href="__EVOMTRS_SITE_URL__/contact/" />
+  <meta property="og:title" content="Contact | EVOMTRS" />
+  <meta property="og:url" content="__EVOMTRS_SITE_URL__/contact/" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" href="/favicon.ico" sizes="any" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preload" href="/assets/css/styles.min.css" as="style" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'" />
+  <link rel="stylesheet" href="/assets/css/styles.min.css" media="print" onload="this.media='all'" />
+  <noscript><link rel="stylesheet" href="/assets/css/styles.min.css" /></noscript>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="container nav">
+      <a class="brand" href="/">EVOMTRS</a>
+      <button class="nav-toggle" type="button" aria-label="Open menu" data-nav-toggle aria-expanded="false"><span></span></button>
+      <div class="nav-wrap" data-nav>
+        <nav class="nav-links" aria-label="Primary">
+          <a href="/">Home</a>
+          <a href="/services/">Services</a>
+          <a href="/gallery/">Case Studies</a>
+          <a href="/about/">About</a>
+          <a href="/testimonials/">Proof</a>
+          <a href="/#faq">FAQ</a>
+          <a href="/contact/">Contact</a>
+        </nav>
+        <div class="nav-cta"><a class="btn primary" href="/contact/">Start Intake</a></div>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="page-hero">
+      <div class="container">
+        <p class="kicker">Intake</p>
+        <h1>Contact</h1>
+        <p class="lead">Call, text, or submit the form below. New intake submissions receive a reply within one business day.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container grid-2">
+        <div data-reveal>
+          <h2>Intake form</h2>
+          <p class="small">Include vehicle, concern, and desired outcome. The more detail you provide, the more useful our first response.</p>
+
+          <form action="__EVOMTRS_FORM_ENDPOINT__" method="post" enctype="multipart/form-data" class="intake-form">
+            <label for="name">Full name</label>
+            <input id="name" name="name" autocomplete="name" required />
+
+            <label for="phone">Phone</label>
+            <input id="phone" name="phone" type="tel" autocomplete="tel" required />
+
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" autocomplete="email" required />
+
+            <div class="form-2col">
+              <div>
+                <label for="year">Vehicle year</label>
+                <input id="year" name="vehicle_year" inputmode="numeric" pattern="[0-9]{4}" placeholder="e.g. 2018" required />
+              </div>
+              <div>
+                <label for="model">Vehicle model</label>
+                <input id="model" name="vehicle_model" placeholder="e.g. C63 AMG" required />
+              </div>
+            </div>
+
+            <label for="service">Service needed</label>
+            <select id="service" name="service_needed" required>
+              <option value="">Select one</option>
+              <option value="diagnostics">Diagnostics</option>
+              <option value="calibration">ECU / TCU calibration</option>
+              <option value="restoration">Restoration</option>
+              <option value="specialty-build">Specialty build</option>
+              <option value="consultation">General consultation</option>
+            </select>
+
+            <label for="goals">Issue / goals</label>
+            <textarea id="goals" name="issue_goals" rows="5" required placeholder="What is happening now, what outcome you want, and any known history."></textarea>
+
+            <div class="form-2col">
+              <div>
+                <label for="budget">Budget range</label>
+                <select id="budget" name="budget_range" required>
+                  <option value="">Select range</option>
+                  <option value="1k-3k">$1k–$3k</option>
+                  <option value="3k-7k">$3k–$7k</option>
+                  <option value="7k-15k">$7k–$15k</option>
+                  <option value="15k-plus">$15k+</option>
+                  <option value="guidance">Need guidance</option>
+                </select>
+              </div>
+              <div>
+                <label for="timeline">Timeline</label>
+                <select id="timeline" name="timeline" required>
+                  <option value="">Select</option>
+                  <option value="asap">ASAP</option>
+                  <option value="2-4-weeks">2–4 weeks</option>
+                  <option value="1-3-months">1–3 months</option>
+                  <option value="flexible">Flexible / planning</option>
+                </select>
+              </div>
+            </div>
+
+            <label for="photos">Photos (optional)</label>
+            <input id="photos" name="vehicle_photos" type="file" multiple accept="image/*" />
+            <p class="small">Attach images of the vehicle or issue if helpful. Accepted with your intake for review.</p>
+
+            <div class="btns">
+              <button class="btn primary" type="submit">Submit intake</button>
+              <a class="btn" href="tel:__EVOMTRS_CONTACT_PHONE_E164__">Call instead</a>
+            </div>
+          </form>
+        </div>
+
+        <div data-reveal data-reveal-delay="1">
+          <h2>Location &amp; direct contact</h2>
+          <p><strong>Address</strong><br />__EVOMTRS_FULL_ADDRESS__</p>
+          <p><strong>Phone</strong><br /><a href="tel:__EVOMTRS_CONTACT_PHONE_E164__">__EVOMTRS_CONTACT_PHONE_DISPLAY__</a></p>
+          <p><strong>Email</strong><br /><a href="mailto:__EVOMTRS_CONTACT_EMAIL__">__EVOMTRS_CONTACT_EMAIL__</a></p>
+          <p class="small">By appointment. Primary service area: Jacksonville, Ponte Vedra, Amelia Island, St. Johns, North Florida.</p>
+          <div class="map-embed">
+            <iframe title="EVOMTRS location" loading="lazy" src="__EVOMTRS_MAP_EMBED_URL__"></iframe>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-grid">
+      <div>
+        <span class="footer-brand">EVOMTRS</span>
+        <p class="small">Mercedes / AMG specialist. Intake, diagnostics, calibration, restoration. Jacksonville.</p>
+        <div class="footer-badges"><span>Intake</span><span>Mercedes / AMG</span><span>Jacksonville</span></div>
+      </div>
+      <div>
+        <p class="footer-title">Navigate</p>
+        <div class="footer-links">
+          <a href="/">Home</a>
+          <a href="/services/">Services</a>
+          <a href="/gallery/">Case Studies</a>
+          <a href="/about/">About</a>
+          <a href="/testimonials/">Proof</a>
+          <a href="/contact/">Contact</a>
+        </div>
+      </div>
+      <div class="footer-contact">
+        <p class="footer-title">Contact</p>
+        <p class="small"><a href="tel:__EVOMTRS_CONTACT_PHONE_E164__">__EVOMTRS_CONTACT_PHONE_DISPLAY__</a></p>
+        <p class="small"><a href="mailto:__EVOMTRS_CONTACT_EMAIL__">__EVOMTRS_CONTACT_EMAIL__</a></p>
+        <p class="small">__EVOMTRS_FULL_ADDRESS__</p>
+      </div>
+      <div class="footer-meta">
+        <p class="footer-title">Legal</p>
+        <div class="footer-links"><a href="/privacy-policy/">Privacy Policy</a><a href="/terms-of-use/">Terms of Use</a></div>
+        <p class="small">© <span data-year></span> EVOMTRS</p>
+      </div>
+    </div>
+  </footer>
+
+  <div class="mobile-cta" aria-label="Quick actions">
+    <a href="tel:__EVOMTRS_CONTACT_PHONE_E164__"><span>Call</span><small>Direct</small></a>
+    <a href="sms:__EVOMTRS_TEXT_PHONE_E164__"><span>Text</span><small>Quick reply</small></a>
+    <a href="__EVOMTRS_DIRECTIONS_URL__" target="_blank" rel="noopener"><span>Directions</span><small>Map</small></a>
+  </div>
+  <script defer src="/assets/js/main.js"></script>
+</body>
+</html>

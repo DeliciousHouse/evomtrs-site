@@ -1,0 +1,17 @@
+services:
+  evomtrs-site-web:
+    build:
+      context: .
+    image: evomtrs-site:latest
+    container_name: evomtrs-site-web
+    restart: unless-stopped
+    env_file:
+      - .env
+    expose:
+      - "8080"
+    networks:
+      - shared_webnet
+
+networks:
+  shared_webnet:
+    external: true
