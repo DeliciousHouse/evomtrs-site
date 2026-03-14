@@ -1,6 +1,6 @@
 # EVOMTRS Static Website
 
-Production-ready static marketing site for `https://evomtrs.hidconsult.com`.
+Production-ready static marketing site for `https://evomtrs.com`.
 
 ## Structure
 
