@@ -8,10 +8,12 @@
     "clean": "rm -rf dist",
     "serve": "npm run build && npx http-server dist -p 8080",
     "dev": "npm run build && npx wrangler pages dev dist --port 8788",
-    "cf:deploy": "npm run build && wrangler pages deploy dist"
+    "cf:deploy": "npm run build && wrangler pages deploy dist",
+    "deploy": "wrangler deploy",
+    "preview": "wrangler dev"
   },
   "devDependencies": {
     "http-server": "latest",
-    "wrangler": "latest"
+    "wrangler": "^4.73.0"
   }
 }
