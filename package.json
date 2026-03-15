@@ -1,0 +1,17 @@
+{
+  "name": "evomtrs-site",
+  "version": "1.0.0",
+  "private": true,
+  "description": "EVOMTRS static marketing site build scripts",
+  "scripts": {
+    "build": "python3 scripts/render_site.py public dist",
+    "clean": "rm -rf dist",
+    "serve": "npm run build && npx http-server dist -p 8080",
+    "dev": "npm run build && npx wrangler pages dev dist --port 8788",
+    "cf:deploy": "npm run build && wrangler pages deploy dist"
+  },
+  "devDependencies": {
+    "http-server": "latest",
+    "wrangler": "latest"
+  }
+}
