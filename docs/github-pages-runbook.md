@@ -2,7 +2,9 @@
 
 Production target: GitHub Pages.
 
-This repository did not have a checked-in GitHub Actions workflow for Pages deployment when inspected on this runner. The proposed workflow is `.github/workflows/deploy-github-pages.yml`.
+The checked-in deployment workflow is `.github/workflows/deploy-github-pages.yml`. It is intentionally manual-only with `workflow_dispatch` until one approved production deployment has passed build, smoke, and rollback review.
+
+Legacy Cloudflare/Wrangler and Docker runtime files remain in the repository as secondary/fallback tooling. They are not the canonical production deployment path while GitHub Pages is selected.
 
 ## Safety policy
 

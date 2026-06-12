@@ -50,3 +50,24 @@ if ('IntersectionObserver' in window) {
 } else {
   revealNodes.forEach(function (node) { node.classList.add('is-visible'); });
 }
+
+(function intakeFallback() {
+  const intakeForm = document.querySelector('[data-intake-form]');
+  if (!intakeForm) return;
+
+  const endpoint = intakeForm.getAttribute('action') || '';
+  const submitButton = intakeForm.querySelector('[data-intake-submit]');
+  const isPlaceholderEndpoint = endpoint.includes('[REPLACE_WITH_') || endpoint.includes('__EVOMTRS_') || endpoint.trim() === '';
+
+  if (isPlaceholderEndpoint && submitButton) {
+    submitButton.type = 'button';
+    submitButton.textContent = 'Call or text to start';
+    submitButton.addEventListener('click', () => {
+      const fallback = document.querySelector('.mobile-cta a[href^="tel:"], a[href^="tel:"]');
+      if (fallback) {
+        fallback.focus({ preventScroll: true });
+        window.location.href = fallback.href;
+      }
+    });
+  }
+})();
