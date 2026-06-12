@@ -17,6 +17,6 @@
   },
   "devDependencies": {
     "http-server": "latest",
-    "wrangler": "^4.73.0"
+    "wrangler": "^4.100.0"
   }
 }
