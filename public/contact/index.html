@@ -43,7 +43,7 @@
       <div class="container">
         <p class="kicker">Intake</p>
         <h1>Contact</h1>
-        <p class="lead">Call, text, or submit the form below. New intake submissions receive a reply within one business day.</p>
+        <p class="lead">__EVOMTRS_INTAKE_LEAD__</p>
       </div>
     </section>
 
@@ -52,6 +52,7 @@
         <div data-reveal>
           <h2>Intake form</h2>
           <p class="small">Include vehicle, concern, and desired outcome. The more detail you provide, the more useful our first response.</p>
+          __EVOMTRS_INTAKE_NOTICE__
 
           <form action="__EVOMTRS_FORM_ENDPOINT__" method="post" enctype="multipart/form-data" class="intake-form" data-intake-form>
             <label for="name">Full name</label>
@@ -113,11 +114,11 @@
 
             <label for="photos">Photos (optional)</label>
             <input id="photos" name="vehicle_photos" type="file" multiple accept="image/*" />
-            <p class="small">Attach images of the vehicle or issue if helpful. If online submission is unavailable, use call/text and mention that photos are ready.</p>
+            <p class="small">__EVOMTRS_INTAKE_HELP_TEXT__</p>
 
-            <div class="btns">
+            <div class="btns __EVOMTRS_CONTACT_ACTION_CLASS__">
               <button class="btn primary" type="submit" data-intake-submit>Submit intake</button>
-              <a class="btn" href="tel:__EVOMTRS_CONTACT_PHONE_E164__">Call instead</a>
+              <a class="btn" href="__EVOMTRS_CONTACT_PHONE_HREF__">Call instead</a>
             </div>
           </form>
         </div>
@@ -125,7 +126,7 @@
         <div data-reveal data-reveal-delay="1">
           <h2>Location &amp; direct contact</h2>
           <p><strong>Address</strong><br />__EVOMTRS_FULL_ADDRESS__</p>
-          <p><strong>Phone</strong><br /><a href="tel:__EVOMTRS_CONTACT_PHONE_E164__">__EVOMTRS_CONTACT_PHONE_DISPLAY__</a></p>
+          <p><strong>Phone</strong><br /><a href="__EVOMTRS_CONTACT_PHONE_HREF__">__EVOMTRS_CONTACT_PHONE_DISPLAY__</a></p>
           <p><strong>Email</strong><br /><a href="mailto:__EVOMTRS_CONTACT_EMAIL__">__EVOMTRS_CONTACT_EMAIL__</a></p>
           <p class="small">By appointment. Primary service area: Jacksonville, Ponte Vedra, Amelia Island, St. Johns, North Florida.</p>
           <div class="map-embed">
@@ -156,7 +157,7 @@
       </div>
       <div class="footer-contact">
         <p class="footer-title">Contact</p>
-        <p class="small"><a href="tel:__EVOMTRS_CONTACT_PHONE_E164__">__EVOMTRS_CONTACT_PHONE_DISPLAY__</a></p>
+        <p class="small"><a href="__EVOMTRS_CONTACT_PHONE_HREF__">__EVOMTRS_CONTACT_PHONE_DISPLAY__</a></p>
         <p class="small"><a href="mailto:__EVOMTRS_CONTACT_EMAIL__">__EVOMTRS_CONTACT_EMAIL__</a></p>
         <p class="small">__EVOMTRS_FULL_ADDRESS__</p>
       </div>
@@ -168,9 +169,9 @@
     </div>
   </footer>
 
-  <div class="mobile-cta" aria-label="Quick actions">
-    <a href="tel:__EVOMTRS_CONTACT_PHONE_E164__"><span>Call</span><small>Direct</small></a>
-    <a href="sms:__EVOMTRS_TEXT_PHONE_E164__"><span>Text</span><small>Quick reply</small></a>
+  <div class="__EVOMTRS_MOBILE_CTA_CLASS__" aria-label="Quick actions">
+    <a href="__EVOMTRS_CONTACT_PHONE_HREF__"><span>Call</span><small>Direct</small></a>
+    <a href="__EVOMTRS_TEXT_PHONE_HREF__"><span>Text</span><small>Quick reply</small></a>
     <a href="__EVOMTRS_DIRECTIONS_URL__" target="_blank" rel="noopener"><span>Directions</span><small>Map</small></a>
   </div>
   <script defer src="/assets/js/main.js"></script>

@@ -67,8 +67,8 @@
     "name": "__EVOMTRS_BUSINESS_NAME__",
     "url": "__EVOMTRS_SITE_URL__/",
     "image": "__EVOMTRS_SITE_URL__/assets/images/Resized_1_2_3e5105d8-6291-4100-beaa-902338ab75f3_1200x.webp",
-    "telephone": "__EVOMTRS_CONTACT_PHONE_E164__",
-    "address": { "@type": "PostalAddress", "streetAddress": "__EVOMTRS_ADDRESS_LINE1__", "addressLocality": "__EVOMTRS_CITY__", "addressRegion": "__EVOMTRS_STATE__", "postalCode": "__EVOMTRS_ZIP__", "addressCountry": "US" },
+    "telephone": "__EVOMTRS_SCHEMA_TELEPHONE__",
+    "address": { "@type": "PostalAddress", "addressLocality": "__EVOMTRS_CITY__", "addressRegion": "__EVOMTRS_STATE__", "addressCountry": "US" },
     "priceRange": "__EVOMTRS_PRICE_RANGE__",
     "description": "Mercedes-Benz and AMG specialist. Diagnostics, ECU/TCU calibration, restoration, specialty builds. Jacksonville, FL.",
     "areaServed": "__EVOMTRS_CITY__, __EVOMTRS_STATE__"
@@ -124,8 +124,8 @@
           <h1>Diagnostics. Calibration. Restoration. Built Right.</h1>
           <p class="lead">EVOMTRS is a founder-led Mercedes and AMG specialist shop. We do not do general repair or multi-make work. We do complex diagnostics, ECU/TCU calibration, drivability refinement, restoration-grade mechanical and cosmetic work, and staged specialty builds—with concours-informed standards and a diagnostics-first process.</p>
           <div class="btns">
-            <a class="btn" href="tel:__EVOMTRS_CONTACT_PHONE_E164__">Call</a>
-            <a class="btn" href="sms:__EVOMTRS_TEXT_PHONE_E164__">Text</a>
+            <a class="btn" href="__EVOMTRS_CONTACT_PHONE_HREF__">Call</a>
+            <a class="btn" href="__EVOMTRS_TEXT_PHONE_HREF__">Text</a>
             <a class="btn primary" href="/contact/">Start Intake</a>
             <a class="btn" href="/gallery/">View Case Studies</a>
           </div>
@@ -340,7 +340,7 @@
           <h2>Service area &amp; contact</h2>
           <p>Primary area: Jacksonville, Ponte Vedra, Amelia Island, St. Johns, North Florida. Out-of-area projects accepted selectively by scope, logistics, and schedule.</p>
           <p><strong>Address</strong> __EVOMTRS_FULL_ADDRESS__</p>
-          <p><strong>Phone</strong> <a href="tel:__EVOMTRS_CONTACT_PHONE_E164__">__EVOMTRS_CONTACT_PHONE_DISPLAY__</a></p>
+          <p><strong>Phone</strong> <a href="__EVOMTRS_CONTACT_PHONE_HREF__">__EVOMTRS_CONTACT_PHONE_DISPLAY__</a></p>
           <p><strong>Email</strong> <a href="mailto:__EVOMTRS_CONTACT_EMAIL__">__EVOMTRS_CONTACT_EMAIL__</a></p>
           <div class="ops-grid">
             <article class="ops-card"><strong>Hours</strong><p class="small">By appointment. Complex work scheduled around diagnostics and parts.</p></article>
@@ -408,7 +408,7 @@
       </div>
       <div class="footer-contact">
         <p class="footer-title">Contact</p>
-        <p class="small"><a href="tel:__EVOMTRS_CONTACT_PHONE_E164__">__EVOMTRS_CONTACT_PHONE_DISPLAY__</a></p>
+        <p class="small"><a href="__EVOMTRS_CONTACT_PHONE_HREF__">__EVOMTRS_CONTACT_PHONE_DISPLAY__</a></p>
         <p class="small"><a href="mailto:__EVOMTRS_CONTACT_EMAIL__">__EVOMTRS_CONTACT_EMAIL__</a></p>
         <p class="small">__EVOMTRS_FULL_ADDRESS__</p>
       </div>
@@ -423,9 +423,9 @@
     </div>
   </footer>
 
-  <div class="mobile-cta" aria-label="Quick actions">
-    <a href="tel:__EVOMTRS_CONTACT_PHONE_E164__"><span>Call</span><small>Direct</small></a>
-    <a href="sms:__EVOMTRS_TEXT_PHONE_E164__"><span>Text</span><small>Quick reply</small></a>
+  <div class="__EVOMTRS_MOBILE_CTA_CLASS__" aria-label="Quick actions">
+    <a href="__EVOMTRS_CONTACT_PHONE_HREF__"><span>Call</span><small>Direct</small></a>
+    <a href="__EVOMTRS_TEXT_PHONE_HREF__"><span>Text</span><small>Quick reply</small></a>
     <a href="__EVOMTRS_DIRECTIONS_URL__" target="_blank" rel="noopener"><span>Directions</span><small>Map</small></a>
   </div>
 
