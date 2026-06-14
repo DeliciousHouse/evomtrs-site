@@ -135,6 +135,7 @@ img { max-width: 100%; display: block; }
 .nav-toggle span::before { top: -6px; }
 .nav-toggle span::after { top: 6px; }
 @media (max-width: 900px) {
+  .site-header { z-index: 200; }
   .nav-toggle { display: flex; }
   .nav-wrap {
     position: fixed;
@@ -150,8 +151,10 @@ img { max-width: 100%; display: block; }
     visibility: hidden;
     transition: transform 0.25s ease, visibility 0s linear 0.25s;
     overflow-y: auto;
+    width: 100vw;
+    height: calc(100dvh - 72px);
     max-width: 100vw;
-    max-height: calc(100dvh - 72px);
+    min-height: calc(100dvh - 72px);
     overscroll-behavior: contain;
   }
   .nav-wrap.is-open {
