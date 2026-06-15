@@ -60,14 +60,21 @@ if ('IntersectionObserver' in window) {
   const isPlaceholderEndpoint = endpoint.includes('[REPLACE_WITH_') || endpoint.includes('__EVOMTRS_') || endpoint.trim() === '';
 
   if (isPlaceholderEndpoint && submitButton) {
+    const fallback = Array.from(document.querySelectorAll('.mobile-cta a[href^="tel:"], a[href^="tel:"]')).find((link) => {
+      return !link.closest('.mobile-cta--pending-phone') && !link.closest('.contact-actions--pending-phone');
+    });
+
     submitButton.type = 'button';
+    if (!fallback) {
+      submitButton.textContent = 'Online intake unavailable';
+      submitButton.disabled = true;
+      return;
+    }
+
     submitButton.textContent = 'Call or text to start';
     submitButton.addEventListener('click', () => {
-      const fallback = document.querySelector('.mobile-cta a[href^="tel:"], a[href^="tel:"]');
-      if (fallback) {
-        fallback.focus({ preventScroll: true });
-        window.location.href = fallback.href;
-      }
+      fallback.focus({ preventScroll: true });
+      window.location.href = fallback.href;
     });
   }
 })();
