@@ -1,5 +1,9 @@
 # EVOMTRS Final Report (Upgrade Pass)
 
+> Historical artifact. This report predates the post-PR8 GitHub Pages launch-gate docs and placeholder-honesty behavior. Do not use it as current deployment truth. Current sources: `README.md`, `docs/github-pages-runbook.md`, `docs/launch-owner-questions.md`, and `docs/launch-values-approval-checklist.md`.
+>
+> Hard gates still apply: no deploy, GitHub settings/variables/secrets, raw `EVOMTRS_FORM_ENDPOINT`, legal/customer-facing approval claims, DNS, or traffic changes without owner/Brendan approval.
+
 ## Current Status
 Upgrade pass completed on top of existing build (no restart, no discard).
 Site now reflects a fuller premium production layout and content direction while preserving performance and static-first architecture.

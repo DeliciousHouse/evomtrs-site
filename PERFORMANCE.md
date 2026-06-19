@@ -119,4 +119,4 @@ For each image in `/assets/images/`:
 | Layout thrashing | Slider wrote then potential read | rAF batch → less reflow risk |
 | Contrast | Kicker below 4.5:1 | #e85c63 → pass |
 
-Rebuild and run a new Lighthouse/PageSpeed pass on https://evomtrs.hidconsult.com to confirm scores and LCP.
+Rebuild and run a new Lighthouse/PageSpeed pass on the owner-approved production URL to confirm scores and LCP.
