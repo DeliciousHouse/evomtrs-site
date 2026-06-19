@@ -57,9 +57,9 @@ git check-ignore -q .env.local
 python3 scripts/render_site.py public /tmp/evomtrs-local-render --env-file .env.local
 python3 scripts/verify_static.py /tmp/evomtrs-local-render --env-file .env.local
 npm run --silent verify
-# Documentation drift guard: current docs should not treat historical reports as launch truth.
-grep -RIn "evomtrs\.hidconsult\.com" README.md .env.example docs/*.md FINAL_REPORT.md REDESIGN.md || true
-grep -RIn "Historical artifact\|Historical design artifact" FINAL_REPORT.md REDESIGN.md
+# Documentation drift guard: current launch docs must not treat historical reports as launch truth.
+! grep -RIn "evomtrs\.hidconsult\.com" README.md .env.example docs/*.md PERFORMANCE.md
+grep -RInE "Historical artifact|Historical design artifact" FINAL_REPORT.md REDESIGN.md
 ```
 
 Expected result:
@@ -69,7 +69,7 @@ Expected result:
 - Static verification exits 0.
 - Required routes: 8.
 - Sitemap, robots, local links/assets, and unreplaced token checks pass.
-- Active docs do not use `evomtrs.hidconsult.com` as the current production URL.
+- Active docs do not use the historical hidconsult subdomain as the current production URL.
 - Any remaining historical-domain references are explicitly labeled as historical context or live inside historical reports with warning banners.
 - Raw `EVOMTRS_FORM_ENDPOINT` values are never printed; use only the variable name, `[REDACTED]`, or `[REPLACE_WITH_FORM_ENDPOINT]`.
 
