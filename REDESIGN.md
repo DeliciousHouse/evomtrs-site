@@ -1,5 +1,7 @@
 # EVOMTRS Redesign — Brand Repositioning
 
+> Historical design artifact. This captures redesign intent, not current launch authorization. Post-PR8 launch truth lives in `README.md` and `docs/launch-*.md`. Owner approval is still required for domain, contact, legal, proof, form endpoint, GitHub Pages setup, and first dispatch.
+
 ## 1. Redesign summary
 
 The site has been **repositioned from “clean boutique luxury” to “elite Mercedes / AMG specialist with motorsport and concours credibility.”** This was a full brand-direction correction, not a cosmetic pass.
@@ -14,8 +16,8 @@ The site has been **repositioned from “clean boutique luxury” to “elite Me
 - **About page:** New. Centered on Eric Praxis: who he is, why Mercedes/AMG, what the Amelia Island credential means in practice, why EVOMTRS is not a general shop.
 - **Case studies:** Gallery reframed as case-study dossiers (vehicle, objective, condition, strategy, work, outcome). Same URL path `/gallery/`, nav label “Case Studies.”
 - **Proof:** Testimonials page reframed as “Proof” with owner-outcome dossiers (client, location, vehicle, problem, work, result). No generic testimonial fluff.
-- **Contact:** Intake form and contact block use env-driven content only. All visible “placeholder” and backend-status language removed. Form posts to `EVOMTRS_FORM_ENDPOINT`; copy sets expectation of reply within one business day.
-- **Legal:** Terms of Use and Privacy Policy replaced with production-ready, full-length content. Styled consistently; nav/footer aligned with rest of site.
+- **Contact:** Intake form and contact block use env-driven content only. Historical note: this redesign originally removed visible placeholder/backend-status language and routed the form through `EVOMTRS_FORM_ENDPOINT`; current post-PR8 behavior intentionally shows owner-approval fallback copy when phone/address/form values are placeholders, and raw endpoint values must stay out of docs and handoffs. The one-business-day response promise remains owner-gated before production.
+- **Legal:** Terms of Use and Privacy Policy replaced with full-length content. Legal pages are structurally complete content, not production legal approval; owner/legal approval is still required before launch. Styled consistently; nav/footer aligned with rest of site.
 - **Navigation:** Unified nav on all pages: Home, Services, Case Studies, About, Proof, FAQ, Contact + “Start Intake” CTA. Mobile: hamburger and slide-out menu.
 - **Components:** Buttons, cards, section headers, proof blocks, process steps, footer, forms refactored into one coherent system (see `public/assets/css/styles.css` design-system comment block).
 
@@ -67,7 +69,7 @@ Full tokens and component rules are in `public/assets/css/styles.css` (top comme
 
 **Before:** The site read like a generic luxury/editorial automotive site: soft serifs (Cormorant Garamond), “luxury-level execution,” “discerning clients,” “boutique shop.” It felt polished but abstract and lifestyle-oriented, not like an elite Mercedes/AMG specialist with real technical and concours credibility.
 
-**After:** The site immediately states Mercedes/AMG only, diagnostics-first, and founder credential (5-time Amelia Island Concours champion). Visuals are darker and sharper; copy is concrete (platform, problem, work, result). The founder is the reason the shop exists (About page, hero trust bar, founder section). Services are specified (Diagnostics, Calibration, Restoration, Performance integration, Specialty build planning) with “what / who / why specialist.” Proof and case studies are structured as dossiers, not vibes. Contact and legal are production-ready with no visible placeholder language.
+**After:** The site immediately states Mercedes/AMG only, diagnostics-first, and founder credential (5-time Amelia Island Concours champion). Visuals are darker and sharper; copy is concrete (platform, problem, work, result). The founder is the reason the shop exists (About page, hero trust bar, founder section). Services are specified (Diagnostics, Calibration, Restoration, Performance integration, Specialty build planning) with “what / who / why specialist.” Proof and case studies are structured as dossiers, not vibes. Contact and legal were redesigned for production use, but post-PR8 launch truth now requires owner-approved contact values, proof claims, legal copy, and placeholder-honesty fallbacks before dispatch.
 
 **Success criteria met:**
 
@@ -77,7 +79,7 @@ Full tokens and component rules are in `public/assets/css/styles.css` (top comme
 
 ## 4. Remaining data needed from the owner
 
-The following **must be supplied in `.env`** (or equivalent) for the site to be fully production-ready. Until then, rendered pages will show whatever values are in `.env` (e.g. literal placeholders if left as in `.env.example`).
+The following **must be supplied in `.env`** (or equivalent) for the site to be fully production-ready. Current renderer behavior converts placeholder address/phone/form values into owner-approval fallback copy where supported; raw `[REPLACE_WITH_*]` values should not be visible to users except the allowed form endpoint placeholder in non-user-facing form-action verification.
 
 | Variable | Purpose | Example / note |
 |----------|---------|----------------|
@@ -87,7 +89,7 @@ The following **must be supplied in `.env`** (or equivalent) for the site to be 
 | `EVOMTRS_CONTACT_PHONE_DISPLAY` | Display phone | e.g. `+1 (904) 123-4567` |
 | `EVOMTRS_CONTACT_EMAIL` | Contact email | Real inbox |
 | `EVOMTRS_TEXT_PHONE_E164` | Click-to-text | Same as or different from phone |
-| `EVOMTRS_FORM_ENDPOINT` | Intake form `action` URL | Backend endpoint that accepts the form POST |
+| `EVOMTRS_FORM_ENDPOINT` | Intake form `action` URL | Backend endpoint that accepts the form POST. Keep raw endpoint values out of docs/Kanban/comments; use `[REDACTED]` in handoffs and GitHub secrets for production. |
 | `EVOMTRS_LEGAL_UPDATED_DATE` | “Last updated” on Terms and Privacy | e.g. `2025-03-06` (set in `.env.example`) |
 | `EVOMTRS_MAP_EMBED_URL` | Map iframe `src` | Google Maps embed URL for actual address |
 | `EVOMTRS_DIRECTIONS_URL` | “Directions” link | Google Maps directions URL |
@@ -96,7 +98,7 @@ The following **must be supplied in `.env`** (or equivalent) for the site to be 
 
 - Replace proof dossiers (A.L., M.R., J.T.) with real client outcomes when available (with permission).
 - Add real review links/badges on the Proof page when approved.
-- Wire form submission to a backend or form service so intake actually lands in the owner’s workflow; until then, form `action` points to `EVOMTRS_FORM_ENDPOINT` (can be a mailto or external form handler).
+- Wire form submission to a backend or form service so intake actually lands in the owner’s workflow; until then, keep the endpoint value redacted in docs and verify that fallback contact copy remains honest when launch values are missing.
 
 ---
 
@@ -117,7 +119,7 @@ The following **must be supplied in `.env`** (or equivalent) for the site to be 
 | `/gallery/` | `public/gallery/index.html` | Case studies (dossiers) |
 | `/about/` | `public/about/index.html` | New; Eric Praxis, why Mercedes-only |
 | `/testimonials/` | `public/testimonials/index.html` | Proof dossiers |
-| `/contact/` | `public/contact/index.html` | Intake form + contact; no placeholder copy |
+| `/contact/` | `public/contact/index.html` | Intake form + contact; owner-approval fallback copy when launch values are missing |
 | `/privacy-policy/` | `public/privacy-policy/index.html` | Full privacy policy |
 | `/terms-of-use/` | `public/terms-of-use/index.html` | Full terms of use |
 | `sitemap.xml` | `public/sitemap.xml` | Includes /services/ and /about/ |

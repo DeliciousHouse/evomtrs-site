@@ -8,7 +8,7 @@ Sources: `.env.example`, `docs/launch-values-approval-checklist.md`, `README.md`
 
 1. What exact production URL should the site use, with no trailing slash?
    - User impact: canonical links, sitemap, robots.txt, social previews, and smoke checks point to this URL.
-   - Current conflict to resolve: repo docs mention both `evomtrs.com` and `evomtrs.hidconsult.com`.
+   - Historical context: older reports/example values referenced `evomtrs.hidconsult.com`; current README targets `https://evomtrs.com`. The owner must still approve the final production dispatch domain before GitHub Pages setup/dispatch.
 
 2. Is the public business name exactly `EVOMTRS`?
    - User impact: search, structured data, page titles, and brand metadata stay consistent.

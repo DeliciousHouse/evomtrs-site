@@ -1,8 +1,15 @@
 # EVOMTRS Static Website
 
-Production-ready static marketing site for `https://evomtrs.com`.
+Static marketing site targeting `https://evomtrs.com`; production dispatch remains gated by owner-approved values, GitHub Pages setup, and the launch runbook.
 
 Canonical production deployment target: GitHub Pages via the manual `.github/workflows/deploy-github-pages.yml` workflow. See `docs/github-pages-runbook.md` for the deployment gate, required GitHub variables/secrets, smoke checks, and rollback steps.
+
+Current launch-gate sources, in order:
+
+1. `docs/launch-owner-questions.md` for owner approvals.
+2. `docs/launch-values-approval-checklist.md` for public values, secret handling, legal/proof gates.
+3. `docs/github-pages-runbook.md` for operator setup, smoke, and rollback.
+4. Historical reports (`FINAL_REPORT.md`, `REDESIGN.md`) are audit/design artifacts, not current launch gates.
 
 ## Deployment posture
 
@@ -30,20 +37,9 @@ Legacy/secondary tooling:
 
 ## Environment
 
-Copy `.env.example` to `.env` if you want a clean starting point, then fill in:
+Copy `.env.example` to `.env` only for local preview/example rendering. The complete production variable/secret list lives in `docs/github-pages-runbook.md`; do not infer missing production values from `.env.example`, and do not treat it as owner-approved launch data.
 
-- `EVOMTRS_CONTACT_PHONE_E164`
-- `EVOMTRS_CONTACT_PHONE_DISPLAY`
-- `EVOMTRS_TEXT_PHONE_E164`
-- `EVOMTRS_CONTACT_EMAIL`
-- `EVOMTRS_ADDRESS_LINE1`
-- `EVOMTRS_ZIP`
-- `EVOMTRS_FORM_ENDPOINT`
-- `EVOMTRS_LEGAL_UPDATED_DATE`
-- `EVOMTRS_DIRECTIONS_URL`
-- `EVOMTRS_MAP_EMBED_URL`
-
-For production, set public values as GitHub repository/environment variables and set `EVOMTRS_FORM_ENDPOINT` as a GitHub secret unless the owner confirms it is public-safe.
+For production, set public values as GitHub repository/environment variables and set `EVOMTRS_FORM_ENDPOINT` as a GitHub secret unless the owner confirms it is public-safe. Keep raw endpoint values out of docs, Kanban comments, and PR bodies.
 
 ## Local Render
 
@@ -74,7 +70,7 @@ Useful scripts:
 
 ## GitHub Pages Setup
 
-Use `docs/github-pages-runbook.md` as the source of truth. Summary:
+Use `docs/github-pages-runbook.md` as the operator source of truth after owner approvals in `docs/launch-owner-questions.md` and `docs/launch-values-approval-checklist.md` are resolved. Historical reports (`FINAL_REPORT.md`, `REDESIGN.md`) are not launch gates. Summary:
 
 - Pages source: GitHub Actions
 - Workflow: `.github/workflows/deploy-github-pages.yml`
