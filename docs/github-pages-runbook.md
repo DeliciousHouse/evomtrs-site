@@ -56,7 +56,9 @@ git status --short --branch
 git check-ignore -q .env.local
 python3 scripts/render_site.py public /tmp/evomtrs-local-render --env-file .env.local
 python3 scripts/verify_static.py /tmp/evomtrs-local-render --env-file .env.local
+python3 scripts/verify_launch_values.py /tmp/evomtrs-local-render --env-file .env.local
 npm run --silent verify
+npm run --silent verify:launch-local
 # Documentation drift guard: current launch docs must not treat historical reports as launch truth.
 ! grep -RIn "evomtrs\.hidconsult\.com" README.md .env.example docs/*.md PERFORMANCE.md
 grep -RInE "Historical artifact|Historical design artifact" FINAL_REPORT.md REDESIGN.md
@@ -67,8 +69,10 @@ Expected result:
 - `.env.local` is ignored.
 - Local render exits 0.
 - Static verification exits 0.
+- Launch-state value verification exits 0 and reports all 22 owner-answer rows from `docs/launch-state-smoke-matrix.md`.
 - Required routes: 8.
 - Sitemap, robots, local links/assets, and unreplaced token checks pass.
+- Hard gates remain visible even when local checks are green: this preflight does not authorize GitHub Pages settings, variables, secrets, DNS/custom-domain changes, legal/customer-facing commitments, workflow dispatch, deploy, or production traffic.
 - Active docs do not use the historical hidconsult subdomain as the current production URL.
 - Any remaining historical-domain references are explicitly labeled as historical context or live inside historical reports with warning banners.
 - Raw `EVOMTRS_FORM_ENDPOINT` values are never printed; use only the variable name, `[REDACTED]`, or `[REPLACE_WITH_FORM_ENDPOINT]`.

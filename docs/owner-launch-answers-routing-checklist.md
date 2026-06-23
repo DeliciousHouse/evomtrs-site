@@ -2,9 +2,7 @@
 
 Purpose: capture final owner launch answers and route each answer to the correct operator task without exposing secrets, inventing approvals, or authorizing deploy/setup work.
 
-This document is not production approval. It does not authorize GitHub settings changes, GitHub environment changes, repository variables, repository secrets, DNS/custom-domain changes, workflow dispatch, deploy, production traffic switch, or legal/customer-facing commitments.
-
-This document is not production approval. A row marked `approved-public` or `approved-secret` means the value is ready to route to the correct future task. It does not authorize GitHub setup, secret creation, workflow dispatch, deploy, DNS changes, production traffic, or legal/customer-facing commitments.
+This document is not production approval. A row marked `approved-public` or `approved-secret` means the value is ready to route to the correct future task; it does not authorize GitHub settings changes, GitHub environment changes, repository variables, repository secrets, DNS/custom-domain changes, workflow dispatch, deploy, production traffic switch, or legal/customer-facing commitments.
 
 Do not fill this checklist from examples, historical reports, generated placeholders, or prior assumptions. Leave rows `blocked` until owner/Brendan written approval exists for the exact field or decision.
 
@@ -17,9 +15,12 @@ Use this order when reconciling launch answers:
 3. `docs/launch-owner-questions.md` for the questions that still need owner answers.
 4. `docs/launch-values-approval-checklist.md` for variable/secret/legal/proof handling.
 5. `docs/github-pages-runbook.md` for setup, smoke, and rollback commands after approval.
-6. `.env.example` only for local preview/example values, never production approval.
+6. `docs/launch-state-smoke-matrix.md` for post-approval local evidence that rendered values match the recorded answers.
+7. `.env.example` only for local preview/example values, never production approval.
 
 Historical reports and example values are not owner approval.
+
+The launch-state smoke matrix is post-approval evidence only. A green matrix does not approve a blocked row, create GitHub variables/secrets, authorize legal/customer-facing claims, or permit workflow dispatch, deploy, DNS changes, or production traffic.
 
 ## Redaction contract
 
@@ -68,11 +69,11 @@ Do not use `done`, `ok`, `pending`, `approved`, `n/a`, or free-form status text.
 | Status/action | Route to | Rule |
 |---|---|---|
 | `needs-copy-change` | `dept-eng` docs/code task | Requires reviewed repo diff, local verify, and QA smoke before setup/dispatch. |
-| `approved-public` GitHub value | `dept-devops` after Brendan hard gate | Configure only after explicit approval for GitHub variables/settings/environment. |
+| `approved-public` | `dept-devops` after Brendan hard gate | Configure GitHub/public values only after explicit approval for GitHub variables/settings/environment. |
 | `approved-secret` | Brendan hard gate then `dept-devops` | Configure only through approved secret path; evidence must say `EVOMTRS_FORM_ENDPOINT=[REDACTED]`. |
 | QA-ready after merge/setup | `dept-qa` | Smoke rendered values, contact links, legal/proof copy, canonical URLs, and no raw secret leakage. |
 | deploy/settings/DNS/legal commitment | Brendan hard gate | Do not treat product/doc approval as deploy approval. |
-| missing/contradictory answer | blocked | Leave blocked with notes/contradictions. |
+| missing/contradictory answer | keep row `blocked` | Leave blocked with notes/contradictions. |
 
 ## Owner-answer table
 
@@ -108,8 +109,9 @@ git status --short --branch
 npm run --silent verify
 python3 -m py_compile scripts/render_site.py scripts/verify_static.py
 git diff --check
+git diff --cached --check
 endpoint_name="EVOMTRS_FORM_ENDPOINT"
-grep -RIn "${endpoint_name}=.*http\|${endpoint_name}=.*://" README.md docs .env.example public scripts package.json || true
+grep -RInE "${endpoint_name}=.*http|${endpoint_name}=.*://" README.md docs .env.example public scripts package.json || true
 grep -RIn "\[REDACTED\]" docs/owner-launch-answers-routing-checklist.md
 grep -RIn "approved-public\|approved-secret\|needs-copy-change\|not-ready-fallback-approved\|blocked" docs/owner-launch-answers-routing-checklist.md
 ```

@@ -7,6 +7,8 @@
     "build": "python3 scripts/render_site.py public dist",
     "build:example": "env -i PATH=\"$PATH\" python3 scripts/render_site.py public dist --env-file .env.example",
     "verify:static": "python3 scripts/verify_static.py dist --env-file .env.example",
+    "verify:launch-values": "python3 scripts/verify_launch_values.py dist --env-file .env.example",
+    "verify:launch-local": "npm run build:example && npm run verify:static && npm run verify:launch-values",
     "verify": "npm run build:example && npm run verify:static",
     "clean": "rm -rf dist",
     "serve": "npm run build && npx http-server dist -p 8080",
