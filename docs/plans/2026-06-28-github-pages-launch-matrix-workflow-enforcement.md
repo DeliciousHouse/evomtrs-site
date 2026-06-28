@@ -1,6 +1,6 @@
 # GitHub Pages Launch-Matrix Workflow Enforcement Implementation Plan
 
-> **For Hermes:** Use subagent-driven-development skill to implement this plan task-by-task.
+> Implementation note: keep this change split into reviewable commits that preserve the existing hard gates around GitHub Pages settings, variables, secrets, workflow dispatch, and production traffic.
 
 **Goal:** Add a production GitHub Pages workflow guard that runs the EVOMTRS launch-state smoke matrix against the exact GitHub variables/secrets used to render `dist/`, before the Pages artifact can be uploaded or deployed.
 
