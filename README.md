@@ -41,7 +41,7 @@ Copy `.env.example` to `.env` only for local preview/example rendering. The comp
 
 For production, set public values as GitHub repository/environment variables and set `EVOMTRS_FORM_ENDPOINT` as a GitHub secret unless the owner confirms it is public-safe. Keep raw endpoint values out of docs, Kanban comments, and PR bodies.
 
-## Local Render
+## Local safe path
 
 ```bash
 ./scripts/convert-images.sh
@@ -49,24 +49,38 @@ For production, set public values as GitHub repository/environment variables and
 python3 -m http.server 8080 --directory dist
 ```
 
-## npm Build Workflow
+## npm build and preview workflow
 
-The site can also be built and served using npm:
+The routine local npm path is build, verify, and serve. `npm run serve` stays local-only: it renders `dist/` and serves it on port `8080` with `http-server`.
 
 ```bash
 npm install
 npm run build
+npm run verify
 npm run serve
 ```
 
-Useful scripts:
+Safe local scripts:
 
 - `npm run build` renders `public/` templates into `dist/`
 - `npm run build:example` renders with `.env.example` in a clean environment
-- `npm run verify` renders with `.env.example` and verifies static output
+- `npm run verify` renders with `.env.example`, verifies static output, and checks deploy-posture guardrails
+- `npm run verify:launch-local` runs the local launch-state smoke matrix against `.env.example`
 - `npm run serve` renders and serves `dist/` locally on port `8080`
-- `npm run dev` renders and runs Cloudflare Pages local dev (`wrangler pages dev`) for legacy Cloudflare-style preview only
-- `npm run cf:deploy`, `npm run deploy`, and `npm run preview` are legacy Wrangler commands and should not be used for production while GitHub Pages is the canonical target
+
+## Canonical production process
+
+GitHub Pages is the canonical production deployment target. Production deployment uses the manual `.github/workflows/deploy-github-pages.yml` workflow only after owner approvals, GitHub repository/environment variables, the `EVOMTRS_FORM_ENDPOINT` GitHub secret, and runbook smoke/rollback gates are ready.
+
+`npm run deploy` is intentionally a fail-fast guardrail. It prints that GitHub Pages is canonical and deploy approval is required; it does not run Wrangler.
+
+## Legacy fallback commands
+
+Wrangler and Docker remain fallback tooling only. Do not use these as the production path unless the owner explicitly re-selects that hosting posture and approves deployment.
+
+- `npm run legacy:dev` renders and runs Cloudflare Pages local dev (`wrangler pages dev`) for legacy Cloudflare-style preview only
+- `npm run legacy:preview` runs `wrangler dev` for legacy Worker-style preview only
+- `npm run legacy:cf:deploy` renders and runs `wrangler pages deploy dist` only after explicit legacy deploy approval
 
 ## GitHub Pages Setup
 
@@ -88,7 +102,7 @@ Cloudflare Pages and Wrangler are retained as secondary/fallback tooling only. I
 - Build command: `npm run build`
 - Build output directory: `dist`
 
-Required build-time `EVOMTRS_*` values should match the GitHub Pages runbook. Do not run Wrangler deploy commands without an explicit deploy approval.
+Required build-time `EVOMTRS_*` values should match the GitHub Pages runbook. Do not run Wrangler deploy commands without explicit legacy deploy approval.
 
 ## Legacy Docker Runtime
 

@@ -10,6 +10,7 @@ Legacy Cloudflare/Wrangler and Docker runtime files remain in the repository as 
 
 - Do not commit `.env`, `.env.local`, `.env.*.local`, `.dev.vars*`, `.wrangler`, `dist/`, or live secret values.
 - Keep production `EVOMTRS_*` values in GitHub repository/environment variables or secrets.
+- Docker `.env` input is for the legacy container runtime only; it is not the GitHub Pages production secret source.
 - Treat `EVOMTRS_FORM_ENDPOINT` as a secret unless the owner confirms it is public-safe.
 - Use `workflow_dispatch` first. Do not enable push-triggered deploys until one manual deployment has passed build, smoke, and rollback review.
 
@@ -63,6 +64,14 @@ npm run --silent verify:launch-local
 ! grep -RIn "evomtrs\.hidconsult\.com" README.md .env.example docs/*.md PERFORMANCE.md
 grep -RInE "Historical artifact|Historical design artifact" FINAL_REPORT.md REDESIGN.md
 ```
+
+Legacy fallback command notes:
+
+- `npm run serve` is the routine local-only preview path and does not dispatch production.
+- `npm run deploy` is a fail-fast guardrail that states GitHub Pages is canonical and deploy approval is required; it does not run Wrangler.
+- `npm run legacy:dev` and `npm run legacy:preview` are legacy Wrangler preview commands only.
+- `npm run legacy:cf:deploy` is retained as a Cloudflare fallback deploy command, but must not be run without explicit legacy deploy approval.
+- Docker remains a legacy runtime fallback only; do not treat Docker `.env` values as GitHub Pages production variables or secrets.
 
 Expected result:
 
