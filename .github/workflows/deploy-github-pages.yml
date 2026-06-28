@@ -71,7 +71,35 @@ jobs:
           EVOMTRS_LEGAL_UPDATED_DATE: ${{ vars.EVOMTRS_LEGAL_UPDATED_DATE }}
           EVOMTRS_DIRECTIONS_URL: ${{ vars.EVOMTRS_DIRECTIONS_URL }}
           EVOMTRS_MAP_EMBED_URL: ${{ vars.EVOMTRS_MAP_EMBED_URL }}
-        run: python3 scripts/verify_static.py dist --env-file <(env | grep '^EVOMTRS_' | sort)
+        shell: bash
+        run: |
+          env | grep '^EVOMTRS_' | sort > /tmp/evomtrs-workflow.env
+          python3 scripts/verify_static.py dist --env-file /tmp/evomtrs-workflow.env
+
+      - name: Verify launch values
+        env:
+          EVOMTRS_SITE_URL: ${{ vars.EVOMTRS_SITE_URL }}
+          EVOMTRS_BUSINESS_NAME: ${{ vars.EVOMTRS_BUSINESS_NAME }}
+          EVOMTRS_CONTACT_EMAIL: ${{ vars.EVOMTRS_CONTACT_EMAIL }}
+          EVOMTRS_CONTACT_PHONE_E164: ${{ vars.EVOMTRS_CONTACT_PHONE_E164 }}
+          EVOMTRS_CONTACT_PHONE_DISPLAY: ${{ vars.EVOMTRS_CONTACT_PHONE_DISPLAY }}
+          EVOMTRS_TEXT_PHONE_E164: ${{ vars.EVOMTRS_TEXT_PHONE_E164 }}
+          EVOMTRS_ADDRESS_LINE1: ${{ vars.EVOMTRS_ADDRESS_LINE1 }}
+          EVOMTRS_CITY: ${{ vars.EVOMTRS_CITY }}
+          EVOMTRS_STATE: ${{ vars.EVOMTRS_STATE }}
+          EVOMTRS_ZIP: ${{ vars.EVOMTRS_ZIP }}
+          EVOMTRS_PRICE_RANGE: ${{ vars.EVOMTRS_PRICE_RANGE }}
+          EVOMTRS_FOUNDER_NAME: ${{ vars.EVOMTRS_FOUNDER_NAME }}
+          EVOMTRS_FOUNDER_ROLE: ${{ vars.EVOMTRS_FOUNDER_ROLE }}
+          EVOMTRS_FOUNDER_CREDENTIAL: ${{ vars.EVOMTRS_FOUNDER_CREDENTIAL }}
+          EVOMTRS_FORM_ENDPOINT: ${{ secrets.EVOMTRS_FORM_ENDPOINT }}
+          EVOMTRS_LEGAL_UPDATED_DATE: ${{ vars.EVOMTRS_LEGAL_UPDATED_DATE }}
+          EVOMTRS_DIRECTIONS_URL: ${{ vars.EVOMTRS_DIRECTIONS_URL }}
+          EVOMTRS_MAP_EMBED_URL: ${{ vars.EVOMTRS_MAP_EMBED_URL }}
+        shell: bash
+        run: |
+          env | grep '^EVOMTRS_' | sort > /tmp/evomtrs-workflow.env
+          python3 scripts/verify_launch_values.py dist --env-file /tmp/evomtrs-workflow.env
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
