@@ -63,10 +63,11 @@ Useful scripts:
 
 - `npm run build` renders `public/` templates into `dist/`
 - `npm run build:example` renders with `.env.example` in a clean environment
-- `npm run verify` renders with `.env.example` and verifies static output
+- `npm run verify` renders with `.env.example`, verifies static output, and checks GitHub Pages deploy-posture guardrails
 - `npm run serve` renders and serves `dist/` locally on port `8080`
-- `npm run dev` renders and runs Cloudflare Pages local dev (`wrangler pages dev`) for legacy Cloudflare-style preview only
-- `npm run cf:deploy`, `npm run deploy`, and `npm run preview` are legacy Wrangler commands and should not be used for production while GitHub Pages is the canonical target
+- `npm run legacy:cf:dev` renders and runs Cloudflare Pages local dev (`wrangler pages dev`) for legacy Cloudflare-style preview only
+- `npm run deploy` fails fast because GitHub Pages is the canonical production target and deploy approval is required before running the manual workflow
+- `npm run legacy:cf:deploy` and `npm run legacy:cf:preview` retain Wrangler fallback commands for explicitly approved legacy Cloudflare work only
 
 ## GitHub Pages Setup
 

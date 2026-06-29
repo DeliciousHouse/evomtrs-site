@@ -9,13 +9,14 @@
     "verify:static": "python3 scripts/verify_static.py dist --env-file .env.example",
     "verify:launch-values": "python3 scripts/verify_launch_values.py dist --env-file .env.example",
     "verify:launch-local": "npm run build:example && npm run verify:static && npm run verify:launch-values",
-    "verify": "npm run build:example && npm run verify:static",
+    "verify:deploy-posture": "python3 scripts/verify_deploy_posture.py",
+    "verify": "npm run build:example && npm run verify:static && npm run verify:deploy-posture",
     "clean": "rm -rf dist",
     "serve": "npm run build && npx http-server dist -p 8080",
-    "dev": "npm run build && npx wrangler pages dev dist --port 8788",
-    "cf:deploy": "npm run build && wrangler pages deploy dist",
-    "deploy": "wrangler deploy",
-    "preview": "wrangler dev"
+    "deploy": "node -e \"console.error('GitHub Pages is the canonical production target; deploy approval is required before running the manual workflow.'); process.exit(1)\"",
+    "legacy:cf:dev": "npm run build && npx wrangler pages dev dist --port 8788",
+    "legacy:cf:deploy": "npm run build && wrangler pages deploy dist",
+    "legacy:cf:preview": "wrangler dev"
   },
   "devDependencies": {
     "http-server": "latest",
