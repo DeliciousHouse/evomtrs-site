@@ -5,6 +5,7 @@ import argparse
 import os
 import shutil
 from pathlib import Path
+from urllib.parse import urlparse
 
 
 TEXT_EXTENSIONS = {".html", ".xml", ".txt", ".svg"}
@@ -23,6 +24,30 @@ def is_placeholder_phone(value: str) -> bool:
     stripped = value.strip()
     digits = "".join(ch for ch in stripped if ch.isdigit())
     return is_placeholder(stripped) or "*" in stripped or digits.endswith("0000")
+
+
+def normalize_public_base_path(site_url: str, override: str | None = None) -> str:
+    raw_path = (override or "").strip()
+    if not raw_path:
+        raw_path = urlparse(site_url).path
+    raw_path = raw_path.strip()
+    if raw_path in {"", "/"}:
+        return ""
+    if "://" in raw_path or "?" in raw_path or "#" in raw_path:
+        raise SystemExit(f"Invalid EVOMTRS_PUBLIC_BASE_PATH: {raw_path!r}")
+    trimmed_path = raw_path
+    if trimmed_path.startswith("/"):
+        trimmed_path = trimmed_path[1:]
+    if trimmed_path.endswith("/"):
+        trimmed_path = trimmed_path[:-1]
+    if not trimmed_path:
+        return ""
+    parts = trimmed_path.split("/")
+    if any(not part for part in parts):
+        raise SystemExit(f"Invalid EVOMTRS_PUBLIC_BASE_PATH duplicate slash: {raw_path!r}")
+    if any(part == ".." for part in parts):
+        raise SystemExit(f"Invalid EVOMTRS_PUBLIC_BASE_PATH traversal segment: {raw_path!r}")
+    return "/" + "/".join(parts)
 
 
 def load_env_file(env_path: Path) -> None:
@@ -65,6 +90,10 @@ def required_env() -> dict[str, str]:
         raise SystemExit(f"Missing required env values: {', '.join(missing)}")
 
     site_url = os.environ["EVOMTRS_SITE_URL"].rstrip("/")
+    base_path = normalize_public_base_path(
+        site_url,
+        os.environ.get("EVOMTRS_PUBLIC_BASE_PATH"),
+    )
     address_line1 = os.environ["EVOMTRS_ADDRESS_LINE1"]
     zip_code = os.environ["EVOMTRS_ZIP"]
     city = os.environ["EVOMTRS_CITY"]
@@ -90,6 +119,7 @@ def required_env() -> dict[str, str]:
 
     values = {key: os.environ[key] for key in keys}
     values["EVOMTRS_SITE_URL"] = site_url
+    values["EVOMTRS_BASE_PATH"] = base_path
     values["EVOMTRS_FULL_ADDRESS"] = full_address
     values["EVOMTRS_ADDRESS_LINE1"] = "" if is_placeholder(address_line1) else address_line1
     values["EVOMTRS_ZIP"] = "" if is_placeholder(zip_code) else zip_code
