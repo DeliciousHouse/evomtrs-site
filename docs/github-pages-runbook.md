@@ -77,6 +77,25 @@ Expected result:
 - Any remaining historical-domain references are explicitly labeled as historical context or live inside historical reports with warning banners.
 - Raw `EVOMTRS_FORM_ENDPOINT` values are never printed; use only the variable name, `[REDACTED]`, or `[REPLACE_WITH_FORM_ENDPOINT]`.
 
+## GitHub Pages project-subpath preflight
+
+For the public project URL `https://delicioushouse.github.io/evomtrs-site/`, local assets and nav links must render under `/evomtrs-site/`. Root-relative `/assets/...` and `/services/` links are broken on GitHub Pages project sites because they escape to `https://delicioushouse.github.io/...`.
+
+Run without mutating GitHub:
+
+```bash
+python3 - <<'PY'
+from pathlib import Path
+src = Path('.env.example').read_text(encoding='utf-8')
+out = src.replace('EVOMTRS_SITE_URL=https://evomtrs.com', 'EVOMTRS_SITE_URL=https://delicioushouse.github.io/evomtrs-site/')
+Path('/tmp/evomtrs-pages-subpath.env').write_text(out, encoding='utf-8')
+PY
+python3 scripts/render_site.py public /tmp/evomtrs-pages-subpath-dist --env-file /tmp/evomtrs-pages-subpath.env
+python3 scripts/verify_static.py /tmp/evomtrs-pages-subpath-dist --env-file /tmp/evomtrs-pages-subpath.env
+```
+
+Expected: `verify_static.py` reports `public base path: /evomtrs-site` and exits 0. This preflight is local-only and does not authorize workflow dispatch, Pages settings changes, variables/secrets changes, DNS/custom-domain changes, deploy, or production traffic changes.
+
 ## Deploy preflight
 
 Requires authenticated GitHub CLI or browser access with repo admin/settings rights:
@@ -120,6 +139,32 @@ for path in / /services/ /gallery/ /about/ /testimonials/ /contact/ /privacy-pol
   curl -fsSI "$SITE$path" | sed -n "1,5p"
 done
 ```
+
+For a GitHub Pages project URL such as `https://delicioushouse.github.io/evomtrs-site`, run this additional no-mutation smoke after an approved deployment:
+
+```bash
+SITE="https://delicioushouse.github.io/evomtrs-site"
+for path in / /services/ /gallery/ /about/ /testimonials/ /contact/ /privacy-policy/ /terms-of-use/ /assets/css/styles.min.css /assets/js/main.js /favicon.svg; do
+  curl -fsSI "$SITE$path" | sed -n "1,5p"
+done
+curl -fsS "$SITE/" -o /tmp/evomtrs-pages-home.html
+python3 - <<'PY'
+from pathlib import Path
+html = Path('/tmp/evomtrs-pages-home.html').read_text(encoding='utf-8')
+required = [
+    'href="/evomtrs-site/assets/css/styles.min.css"',
+    'src="/evomtrs-site/assets/js/main.js"',
+    'href="/evomtrs-site/services/"',
+    'href="/evomtrs-site/contact/"',
+]
+missing = [needle for needle in required if needle not in html]
+if missing:
+    raise SystemExit('Missing subpath-scoped URLs: ' + ', '.join(missing))
+print('live subpath-scoped URL smoke: ok')
+PY
+```
+
+These commands only read public URLs. They do not authorize deployment or production changes.
 
 ## Rollback
 

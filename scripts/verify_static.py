@@ -65,6 +65,49 @@ def route_file(dist_dir: Path, route: str) -> Path:
     return dist_dir / route.strip("/") / "index.html"
 
 
+def normalize_public_base_path(site_url: str, override: str | None = None) -> str:
+    raw_path = (override or "").strip()
+    if not raw_path:
+        raw_path = urlparse(site_url).path
+    raw_path = raw_path.strip()
+    if raw_path in {"", "/"}:
+        return ""
+    if "://" in raw_path or "?" in raw_path or "#" in raw_path:
+        raise SystemExit(f"Invalid EVOMTRS_PUBLIC_BASE_PATH: {raw_path!r}")
+    trimmed_path = raw_path
+    if trimmed_path.startswith("/"):
+        trimmed_path = trimmed_path[1:]
+    if trimmed_path.endswith("/"):
+        trimmed_path = trimmed_path[:-1]
+    if not trimmed_path:
+        return ""
+    parts = trimmed_path.split("/")
+    if any(not part for part in parts):
+        raise SystemExit(f"Invalid EVOMTRS_PUBLIC_BASE_PATH duplicate slash: {raw_path!r}")
+    if any(part == ".." for part in parts):
+        raise SystemExit(f"Invalid EVOMTRS_PUBLIC_BASE_PATH traversal segment: {raw_path!r}")
+    return "/" + "/".join(parts)
+
+
+def strip_base_path_for_local_target(url_path: str, base_path: str) -> str | None:
+    if not base_path:
+        return url_path or "/"
+    if url_path == base_path:
+        return "/"
+    prefix = f"{base_path}/"
+    if url_path.startswith(prefix):
+        return "/" + url_path[len(prefix):]
+    return None
+
+
+def browser_path(route: str, base_path: str) -> str:
+    if not base_path:
+        return route
+    if route == "/":
+        return f"{base_path}/"
+    return f"{base_path}{route}"
+
+
 def text_files(dist_dir: Path) -> list[Path]:
     return sorted(
         path
@@ -150,9 +193,11 @@ def check_robots(dist_dir: Path, site_url: str) -> list[str]:
     return failures
 
 
-def local_link_target_exists(dist_dir: Path, url: str) -> bool:
+def local_link_target_exists(dist_dir: Path, url: str, base_path: str) -> bool:
     parsed = urlparse(url)
-    path = parsed.path
+    path = strip_base_path_for_local_target(parsed.path, base_path)
+    if path is None:
+        return False
     if not path or path == "/":
         return (dist_dir / "index.html").exists()
     if path.endswith("/"):
@@ -165,7 +210,7 @@ def should_skip_url(url: str) -> bool:
     return bool(parsed.netloc or (parsed.scheme and parsed.scheme != "file")) or url.startswith("#")
 
 
-def check_links(dist_dir: Path) -> list[str]:
+def check_links(dist_dir: Path, base_path: str) -> list[str]:
     failures: list[str] = []
 
     for html_path in sorted(dist_dir.rglob("*.html")):
@@ -173,16 +218,28 @@ def check_links(dist_dir: Path) -> list[str]:
         parser.feed(html_path.read_text(encoding="utf-8"))
         page_hrefs: set[str] = set()
         for attr, url in parser.links:
+            parsed = urlparse(url)
             if attr == "href":
-                page_hrefs.add(urlparse(url).path or url)
+                page_hrefs.add(parsed.path or url)
             if not url.startswith("/") or should_skip_url(url):
                 continue
-            if not local_link_target_exists(dist_dir, url):
+            if (
+                base_path
+                and parsed.path.startswith("/")
+                and parsed.path != base_path
+                and not parsed.path.startswith(f"{base_path}/")
+            ):
+                failures.append(
+                    f"{html_path.relative_to(dist_dir)} references root-relative {attr} target {url} outside configured base path {base_path}"
+                )
+                continue
+            if not local_link_target_exists(dist_dir, url, base_path):
                 failures.append(
                     f"{html_path.relative_to(dist_dir)} references missing local {attr} target {url}"
                 )
 
-        missing_core_links = [href for href in CORE_LINKS if href not in page_hrefs]
+        expected_core_links = [browser_path(route, base_path) for route in CORE_LINKS]
+        missing_core_links = [href for href in expected_core_links if href not in page_hrefs]
         failures.extend(
             f"{html_path.relative_to(dist_dir)} missing core link {href}"
             for href in missing_core_links
@@ -212,6 +269,10 @@ def main() -> int:
     if not site_url:
         print("FAIL: EVOMTRS_SITE_URL missing from env example", file=sys.stderr)
         return 1
+    base_path = normalize_public_base_path(
+        site_url,
+        env_values.get("EVOMTRS_PUBLIC_BASE_PATH"),
+    )
 
     allowed_placeholders = {
         value for value in env_values.values() if PLACEHOLDER_RE.fullmatch(value)
@@ -221,7 +282,7 @@ def main() -> int:
     failures.extend(check_required_routes(dist_dir))
     failures.extend(check_sitemap(dist_dir, site_url))
     failures.extend(check_robots(dist_dir, site_url))
-    failures.extend(check_links(dist_dir))
+    failures.extend(check_links(dist_dir, base_path))
     token_failures, placeholder_counts = find_tokens(dist_dir, allowed_placeholders)
     failures.extend(token_failures)
 
@@ -236,6 +297,7 @@ def main() -> int:
     print("sitemap.xml: ok")
     print("robots.txt: ok")
     print("local links/assets: ok")
+    print(f"public base path: {base_path or '/'}")
     print("unreplaced template tokens: none")
     if allowed_placeholders:
         print("allowed .env.example placeholders:")
