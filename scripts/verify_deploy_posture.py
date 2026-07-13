@@ -126,6 +126,7 @@ def check_workflow_launch_value_gate(text: str) -> list[str]:
         "Pages configuration": "actions/configure-pages@v5",
         "Pages artifact upload": "actions/upload-pages-artifact@v3",
         "endpoint GitHub secret": "EVOMTRS_FORM_ENDPOINT: ${{ secrets.EVOMTRS_FORM_ENDPOINT }}",
+        "production approval guard": "EVOMTRS_REQUIRE_PRODUCTION_APPROVAL: \"1\"",
     }
     positions: dict[str, int] = {}
     for label, needle in required.items():
@@ -175,6 +176,7 @@ def main() -> int:
     print("- Wrangler deploy fallback is legacy-prefixed")
     print("- runbook retains .env/live secret commit guardrails")
     print("- GitHub Pages workflow launch-value verification gates artifact upload")
+    print("- GitHub Pages workflow blocks preview-only/test launch values")
     return 0
 
 

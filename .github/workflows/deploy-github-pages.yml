@@ -96,6 +96,7 @@ jobs:
           EVOMTRS_LEGAL_UPDATED_DATE: ${{ vars.EVOMTRS_LEGAL_UPDATED_DATE }}
           EVOMTRS_DIRECTIONS_URL: ${{ vars.EVOMTRS_DIRECTIONS_URL }}
           EVOMTRS_MAP_EMBED_URL: ${{ vars.EVOMTRS_MAP_EMBED_URL }}
+          EVOMTRS_REQUIRE_PRODUCTION_APPROVAL: "1"
         shell: bash
         run: |
           env | grep '^EVOMTRS_' | sort > /tmp/evomtrs-workflow.env
