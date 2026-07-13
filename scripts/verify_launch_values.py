@@ -115,20 +115,31 @@ def require_keys(values: dict[str, str]) -> list[str]:
     return [f"missing env value {key}" for key in missing]
 
 
+def normalized_preview_value(key: str, value: str) -> str:
+    stripped = value.strip()
+    if key == "EVOMTRS_SITE_URL":
+        return stripped.lower().rstrip("/")
+    if key == "EVOMTRS_CONTACT_EMAIL":
+        return stripped.lower()
+    return stripped
+
+
 def production_value_failures(values: dict[str, str]) -> list[str]:
     failures: list[str] = []
     for key, disallowed_values in PREVIEW_ONLY_EXACT_VALUES.items():
-        value = values.get(key, "").strip()
-        if value in disallowed_values:
+        value = normalized_preview_value(key, values.get(key, ""))
+        normalized_disallowed = {normalized_preview_value(key, item) for item in disallowed_values}
+        if value in normalized_disallowed:
             failures.append(f"{key} still uses preview-only value {value!r}")
 
     for key, disallowed_fragments in PREVIEW_ONLY_SUBSTRINGS.items():
-        value = values.get(key, "").strip()
-        if any(fragment in value for fragment in disallowed_fragments):
+        value = values.get(key, "").strip().lower()
+        if any(fragment.lower() in value for fragment in disallowed_fragments):
             failures.append(f"{key} still uses preview-only phone/test value")
 
     endpoint = values.get(ENDPOINT_KEY, "").strip()
-    if endpoint in PREVIEW_ONLY_ENDPOINT_VALUES or is_placeholder(endpoint):
+    normalized_endpoint = endpoint.upper() if endpoint.startswith("[") else endpoint
+    if normalized_endpoint in PREVIEW_ONLY_ENDPOINT_VALUES or is_placeholder(endpoint):
         failures.append(f"{ENDPOINT_KEY} still uses a placeholder value")
     return failures
 

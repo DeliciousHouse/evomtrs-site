@@ -141,12 +141,13 @@ def check_workflow_launch_value_gate(text: str) -> list[str]:
     if not failures:
         if not (
             positions["static verification"]
+            < positions["production approval guard"]
             < positions["launch-value verification"]
             < positions["Pages configuration"]
             < positions["Pages artifact upload"]
         ):
             failures.append(
-                "deploy workflow must run static verification, then launch-value verification, before Pages configure/upload"
+                "deploy workflow must run static verification, set the production approval guard, then run launch-value verification before Pages configure/upload"
             )
     return failures
 
