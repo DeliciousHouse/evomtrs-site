@@ -37,6 +37,22 @@ PUBLIC_KEYS = [
 ]
 REQUIRED_KEYS = PUBLIC_KEYS + [ENDPOINT_KEY]
 
+# Values that are acceptable for local/example preview renders but must never be
+# used for a production GitHub Pages dispatch. Keep these checks value-based so
+# they work in GitHub Actions without reading repo variable metadata.
+PREVIEW_ONLY_EXACT_VALUES = {
+    "EVOMTRS_SITE_URL": {"http://127.0.0.1:8080", "http://localhost:8080"},
+    "EVOMTRS_CONTACT_EMAIL": {"hello@example.invalid", "support@hidconsult.com"},
+    "EVOMTRS_ADDRESS_LINE1": {"123 Local Test Way"},
+    "EVOMTRS_FOUNDER_CREDENTIAL": {"Local test credential"},
+}
+PREVIEW_ONLY_SUBSTRINGS = {
+    "EVOMTRS_CONTACT_PHONE_E164": ["555", "****"],
+    "EVOMTRS_CONTACT_PHONE_DISPLAY": ["555", "****"],
+    "EVOMTRS_TEXT_PHONE_E164": ["555", "****"],
+}
+PREVIEW_ONLY_ENDPOINT_VALUES = {"[REPLACE_WITH_FORM_ENDPOINT]"}
+
 
 @dataclass(frozen=True)
 class Check:
@@ -99,6 +115,24 @@ def require_keys(values: dict[str, str]) -> list[str]:
     return [f"missing env value {key}" for key in missing]
 
 
+def production_value_failures(values: dict[str, str]) -> list[str]:
+    failures: list[str] = []
+    for key, disallowed_values in PREVIEW_ONLY_EXACT_VALUES.items():
+        value = values.get(key, "").strip()
+        if value in disallowed_values:
+            failures.append(f"{key} still uses preview-only value {value!r}")
+
+    for key, disallowed_fragments in PREVIEW_ONLY_SUBSTRINGS.items():
+        value = values.get(key, "").strip()
+        if any(fragment in value for fragment in disallowed_fragments):
+            failures.append(f"{key} still uses preview-only phone/test value")
+
+    endpoint = values.get(ENDPOINT_KEY, "").strip()
+    if endpoint in PREVIEW_ONLY_ENDPOINT_VALUES or is_placeholder(endpoint):
+        failures.append(f"{ENDPOINT_KEY} still uses a placeholder value")
+    return failures
+
+
 def contains_any(files: dict[str, str], needle: str, paths: list[str] | None = None) -> bool:
     selected = paths or list(files)
     return any(needle in files.get(path, "") for path in selected)
@@ -143,6 +177,8 @@ def format_check(row: str, passed: bool, evidence: str, next_owner: str) -> Chec
 def run_checks(dist_dir: Path, values: dict[str, str], files: dict[str, str]) -> tuple[list[Check], list[str]]:
     failures: list[str] = []
     failures.extend(require_keys(values))
+    if values.get("EVOMTRS_REQUIRE_PRODUCTION_APPROVAL", "").strip().lower() in {"1", "true", "yes"}:
+        failures.extend(production_value_failures(values))
 
     endpoint = values.get(ENDPOINT_KEY, "")
     if endpoint_leaked(files, endpoint):

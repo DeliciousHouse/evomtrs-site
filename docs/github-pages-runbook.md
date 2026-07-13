@@ -109,6 +109,7 @@ Confirm before dispatch:
 
 - Pages source is GitHub Actions.
 - All variables/secrets above exist in the selected GitHub scope.
+- Repository/environment variables are owner-approved production values, not preview/test values such as `http://127.0.0.1:8080`, `hello@example.invalid`, `123 Local Test Way`, 555/masked phone numbers, or `Local test credential`. The workflow sets `EVOMTRS_REQUIRE_PRODUCTION_APPROVAL=1`, so these preview-only values fail before any Pages artifact upload.
 - The workflow file has been merged to the default branch.
 - Production hostname is confirmed. The user stated production is on GitHub Pages; `EVOMTRS_SITE_URL` should match the public Pages/custom domain.
 
