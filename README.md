@@ -93,8 +93,15 @@ Required build-time `EVOMTRS_*` values should match the GitHub Pages runbook. Do
 
 ## Legacy Docker Runtime
 
+Docker remains a legacy/fallback runtime for local or historical Nginx Proxy Manager hosting only. GitHub Pages is still the canonical production path.
+
+For a local compose preview, create a local runtime env file first:
+
 ```bash
+cp .env.example .env
 docker compose up --build -d
 ```
 
-The container serves rendered output on internal port `8080` and joins the external Docker network `shared_webnet` so Nginx Proxy Manager can forward traffic to it. This is legacy/fallback hosting guidance, not the current canonical production path while GitHub Pages is selected.
+Keep raw endpoint values out of docs, Kanban comments, and PR bodies. Docker image builds must not bake local env or secret files into image layers; compose injects `.env` only at container runtime.
+
+The container serves rendered output on internal port `8080` and joins the external Docker network `shared_webnet` so Nginx Proxy Manager can forward traffic to it. The `shared_webnet` network must already exist in the historical host setup; do not create or mutate Docker networks as part of routine local preview work.
