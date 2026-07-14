@@ -1,5 +1,13 @@
 .git
 .gitignore
+.env
+.env.local
+.env.*.local
+.dev.vars*
+.wrangler
+node_modules
+__pycache__
+*.pyc
 dist
 evomtrs-site-final.tar
 FINAL_REPORT.md

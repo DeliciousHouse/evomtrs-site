@@ -11,10 +11,8 @@ RUN mkdir -p /docker-entrypoint.d /opt/evomtrs/runtime
 COPY <<'EOF' /docker-entrypoint.d/40-render-site.sh
 #!/bin/sh
 set -eu
-python3 /opt/evomtrs/render_site.py /opt/evomtrs/public /usr/share/nginx/html --env-file /opt/evomtrs/runtime/.env
+python3 /opt/evomtrs/render_site.py /opt/evomtrs/public /usr/share/nginx/html
 EOF
-
-COPY .env /opt/evomtrs/runtime/.env
 
 RUN chmod +x /docker-entrypoint.d/40-render-site.sh
 
