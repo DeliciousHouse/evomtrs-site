@@ -41,6 +41,14 @@ def main() -> int:
         description="Verify owner-pending production-looking EVOMTRS builds are contained."
     )
     parser.add_argument("dist", type=Path, help="Rendered site directory")
+    parser.add_argument(
+        "--expect-canonical-root",
+        help="Optional expected canonical URL for the rendered root route.",
+    )
+    parser.add_argument(
+        "--expect-escaped-business-name",
+        help="Optional escaped business name expected in holding-page metadata.",
+    )
     args = parser.parse_args()
 
     dist_dir = args.dist.resolve()
@@ -58,6 +66,22 @@ def main() -> int:
                 failures.append(f"{route} is not in owner-values-pending holding state")
             if NOINDEX_MARKER not in html:
                 failures.append(f"{route} is missing noindex/nofollow robots meta")
+
+            if route == "index.html" and args.expect_canonical_root:
+                canonical = f'<link rel="canonical" href="{args.expect_canonical_root}" />'
+                if canonical not in html:
+                    failures.append(
+                        f"{route} canonical did not match {args.expect_canonical_root!r}"
+                    )
+
+            if route == "index.html" and args.expect_escaped_business_name:
+                expected_description = (
+                    f'<meta name="description" content="{args.expect_escaped_business_name} '
+                    "public launch details are being verified before intake details are published."
+                    '" />'
+                )
+                if expected_description not in html:
+                    failures.append("root holding meta description does not contain escaped business name")
 
         robots = dist_dir / "robots.txt"
         if not robots.is_file():
@@ -84,6 +108,10 @@ def main() -> int:
     print("Known placeholder markers: none")
     print("robots.txt: Disallow: /")
     print("meta robots: noindex, nofollow")
+    if args.expect_canonical_root:
+        print(f"canonical root: {args.expect_canonical_root}")
+    if args.expect_escaped_business_name:
+        print("business name escaping: verified")
     return 0
 
 

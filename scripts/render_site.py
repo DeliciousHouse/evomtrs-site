@@ -82,17 +82,17 @@ def browser_path(route: str, base_path: str) -> str:
     return f"{base_path}{route}"
 
 
-def route_url(site_url: str, route: str) -> str:
-    if route == "/":
-        return f"{site_url}/"
-    return f"{site_url}{route}"
+def route_url(site_url: str, route: str, base_path: str) -> str:
+    parsed = urlparse(site_url)
+    origin = f"{parsed.scheme}://{parsed.netloc}" if parsed.scheme and parsed.netloc else site_url.rstrip("/")
+    return f"{origin}{browser_path(route, base_path)}"
 
 
 def render_holding_page(route: str, values: dict[str, str]) -> str:
     site_url = values["EVOMTRS_SITE_URL"]
     base_path = values["EVOMTRS_BASE_PATH"]
-    business_name = html.escape(values["EVOMTRS_BUSINESS_NAME"])
-    canonical = html.escape(route_url(site_url, route), quote=True)
+    business_name = html.escape(values["EVOMTRS_BUSINESS_NAME"], quote=True)
+    canonical = html.escape(route_url(site_url, route, base_path), quote=True)
     nav = "\n".join(
         f'        <a href="{html.escape(browser_path(item, base_path), quote=True)}">{label}</a>'
         for item, label in [
@@ -139,8 +139,8 @@ def render_holding_page(route: str, values: dict[str, str]) -> str:
 """
 
 
-def render_holding_robots(site_url: str) -> str:
-    return f"User-agent: *\nDisallow: /\n\nSitemap: {site_url}/sitemap.xml\n"
+def render_holding_robots(site_url: str, base_path: str) -> str:
+    return f"User-agent: *\nDisallow: /\n\nSitemap: {route_url(site_url, '/sitemap.xml', base_path)}\n"
 
 
 def load_env_file(env_path: Path) -> None:
@@ -270,7 +270,7 @@ def render_templates(src_dir: Path, out_dir: Path, values: dict[str, str]) -> No
             for key, value in values.items():
                 text = text.replace(f"__{key}__", value)
             if values.get("EVOMTRS_CONTAIN_OWNER_PENDING_PLACEHOLDERS") and relative == Path("robots.txt"):
-                text = render_holding_robots(values["EVOMTRS_SITE_URL"])
+                text = render_holding_robots(values["EVOMTRS_SITE_URL"], values["EVOMTRS_BASE_PATH"])
             target.write_text(text, encoding="utf-8")
         else:
             target.parent.mkdir(parents=True, exist_ok=True)
