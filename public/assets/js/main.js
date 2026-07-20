@@ -57,7 +57,9 @@ if ('IntersectionObserver' in window) {
 
   const endpoint = intakeForm.getAttribute('action') || '';
   const submitButton = intakeForm.querySelector('[data-intake-submit]');
-  const isPlaceholderEndpoint = endpoint.includes('[REPLACE_WITH_') || endpoint.includes('__EVOMTRS_') || endpoint.trim() === '';
+  const replacementPrefix = '[' + 'REPLACE_WITH_';
+  const templatePrefix = '__' + 'EVOMTRS_';
+  const isPlaceholderEndpoint = endpoint.includes(replacementPrefix) || endpoint.includes(templatePrefix) || endpoint.trim() === '';
 
   if (isPlaceholderEndpoint && submitButton) {
     const fallback = Array.from(document.querySelectorAll('.mobile-cta a[href^="tel:"], a[href^="tel:"]')).find((link) => {

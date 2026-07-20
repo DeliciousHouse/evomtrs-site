@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+import html
 import os
 import shutil
 from pathlib import Path
@@ -9,6 +10,17 @@ from urllib.parse import urlparse
 
 
 TEXT_EXTENSIONS = {".html", ".xml", ".txt", ".svg"}
+PREVIEW_PLACEHOLDER_FLAG = "EVOMTRS_ALLOW_PREVIEW_PLACEHOLDERS"
+HOLDING_ROUTES = {
+    Path("index.html"): "/",
+    Path("services/index.html"): "/services/",
+    Path("gallery/index.html"): "/gallery/",
+    Path("about/index.html"): "/about/",
+    Path("testimonials/index.html"): "/testimonials/",
+    Path("contact/index.html"): "/contact/",
+    Path("privacy-policy/index.html"): "/privacy-policy/",
+    Path("terms-of-use/index.html"): "/terms-of-use/",
+}
 
 
 def is_placeholder(value: str) -> bool:
@@ -48,6 +60,87 @@ def normalize_public_base_path(site_url: str, override: str | None = None) -> st
     if any(part == ".." for part in parts):
         raise SystemExit(f"Invalid EVOMTRS_PUBLIC_BASE_PATH traversal segment: {raw_path!r}")
     return "/" + "/".join(parts)
+
+
+def truthy_env(name: str) -> bool:
+    return os.environ.get(name, "").strip().lower() in {"1", "true", "yes", "on"}
+
+
+def is_production_looking_url(site_url: str) -> bool:
+    parsed = urlparse(site_url)
+    host = (parsed.hostname or "").lower()
+    if parsed.scheme not in {"http", "https"} or not host:
+        return False
+    return host not in {"localhost", "127.0.0.1", "::1"} and not host.endswith(".invalid")
+
+
+def browser_path(route: str, base_path: str) -> str:
+    if not base_path:
+        return route
+    if route == "/":
+        return f"{base_path}/"
+    return f"{base_path}{route}"
+
+
+def route_url(site_url: str, route: str) -> str:
+    if route == "/":
+        return f"{site_url}/"
+    return f"{site_url}{route}"
+
+
+def render_holding_page(route: str, values: dict[str, str]) -> str:
+    site_url = values["EVOMTRS_SITE_URL"]
+    base_path = values["EVOMTRS_BASE_PATH"]
+    business_name = html.escape(values["EVOMTRS_BUSINESS_NAME"])
+    canonical = html.escape(route_url(site_url, route), quote=True)
+    nav = "\n".join(
+        f'        <a href="{html.escape(browser_path(item, base_path), quote=True)}">{label}</a>'
+        for item, label in [
+            ("/", "Home"),
+            ("/services/", "Services"),
+            ("/gallery/", "Case Studies"),
+            ("/about/", "About"),
+            ("/testimonials/", "Proof"),
+            ("/contact/", "Contact"),
+            ("/privacy-policy/", "Privacy Policy"),
+            ("/terms-of-use/", "Terms of Use"),
+        ]
+    )
+    css_href = html.escape(f"{base_path}/assets/css/styles.min.css" if base_path else "/assets/css/styles.min.css", quote=True)
+    favicon_svg = html.escape(f"{base_path}/favicon.svg" if base_path else "/favicon.svg", quote=True)
+    favicon_ico = html.escape(f"{base_path}/favicon.ico" if base_path else "/favicon.ico", quote=True)
+    return f"""<!doctype html>
+<html lang="en" data-evomtrs-holding="owner-values-pending">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>{business_name} | Site update in progress</title>
+  <meta name="description" content="{business_name} public launch details are being verified before intake details are published." />
+  <link rel="canonical" href="{canonical}" />
+  <link rel="icon" type="image/svg+xml" href="{favicon_svg}" />
+  <link rel="icon" href="{favicon_ico}" sizes="any" />
+  <link rel="stylesheet" href="{css_href}" />
+</head>
+<body>
+  <main class="section" id="main">
+    <div class="container" style="max-width: 760px; padding-top: 12vh; padding-bottom: 12vh;">
+      <p class="kicker">Site update</p>
+      <h1>{business_name} public launch details are being verified.</h1>
+      <p class="lead">This holding build intentionally withholds intake, phone, visit, and proof details until owner-approved launch values are configured.</p>
+      <p class="small">No customer intake path is live from this build. Check back after the approved GitHub Pages launch.</p>
+      <nav class="footer-links" aria-label="Site routes">
+{nav}
+      </nav>
+    </div>
+  </main>
+</body>
+</html>
+"""
+
+
+def render_holding_robots(site_url: str) -> str:
+    return f"User-agent: *\nDisallow: /\n\nSitemap: {site_url}/sitemap.xml\n"
 
 
 def load_env_file(env_path: Path) -> None:
@@ -106,6 +199,7 @@ def required_env() -> dict[str, str]:
     has_placeholder_address = is_placeholder(address_line1) or is_placeholder(zip_code)
     has_placeholder_form_endpoint = is_placeholder(form_endpoint)
     has_placeholder_phone = is_placeholder_phone(phone_e164) or is_placeholder_phone(phone_display)
+    owner_values_pending = has_placeholder_address or has_placeholder_form_endpoint or has_placeholder_phone
 
     address_parts = [
         "" if is_placeholder(address_line1) else address_line1,
@@ -146,6 +240,11 @@ def required_env() -> dict[str, str]:
         if has_placeholder_form_endpoint
         else "Attach images of the vehicle or issue if helpful. If online submission is unavailable, use call/text and mention that photos are ready."
     )
+    values["EVOMTRS_CONTAIN_OWNER_PENDING_PLACEHOLDERS"] = (
+        "1"
+        if owner_values_pending and is_production_looking_url(site_url) and not truthy_env(PREVIEW_PLACEHOLDER_FLAG)
+        else ""
+    )
     return values
 
 
@@ -163,9 +262,15 @@ def render_templates(src_dir: Path, out_dir: Path, values: dict[str, str]) -> No
             continue
 
         if path.suffix in TEXT_EXTENSIONS:
+            if values.get("EVOMTRS_CONTAIN_OWNER_PENDING_PLACEHOLDERS") and relative in HOLDING_ROUTES:
+                target.write_text(render_holding_page(HOLDING_ROUTES[relative], values), encoding="utf-8")
+                continue
+
             text = path.read_text(encoding="utf-8")
             for key, value in values.items():
                 text = text.replace(f"__{key}__", value)
+            if values.get("EVOMTRS_CONTAIN_OWNER_PENDING_PLACEHOLDERS") and relative == Path("robots.txt"):
+                text = render_holding_robots(values["EVOMTRS_SITE_URL"])
             target.write_text(text, encoding="utf-8")
         else:
             target.parent.mkdir(parents=True, exist_ok=True)
