@@ -58,6 +58,7 @@ python3 scripts/render_site.py public /tmp/evomtrs-local-render --env-file .env.
 python3 scripts/verify_static.py /tmp/evomtrs-local-render --env-file .env.local
 python3 scripts/verify_launch_values.py /tmp/evomtrs-local-render --env-file .env.local
 npm run --silent verify
+npm run --silent verify:placeholder-containment
 npm run --silent verify:launch-local
 # Documentation drift guard: current launch docs must not treat historical reports as launch truth.
 ! grep -RIn "evomtrs\.hidconsult\.com" README.md .env.example docs/*.md PERFORMANCE.md
@@ -70,6 +71,7 @@ Expected result:
 - Local render exits 0.
 - Static verification exits 0.
 - Launch-state value verification exits 0 and reports all 22 owner-answer rows from `docs/launch-state-smoke-matrix.md`.
+- Placeholder-containment verification exits 0: a production-looking render with owner-pending example values enters a noindex holding state and omits `Phone pending owner approval`, `hidconsult`, `support@hidconsult.com`, and `[REPLACE_WITH_*]` markers.
 - Required routes: 8.
 - Sitemap, robots, local links/assets, and unreplaced token checks pass.
 - Hard gates remain visible even when local checks are green: this preflight does not authorize GitHub Pages settings, variables, secrets, DNS/custom-domain changes, legal/customer-facing commitments, workflow dispatch, deploy, or production traffic.
@@ -110,6 +112,7 @@ Confirm before dispatch:
 - Pages source is GitHub Actions.
 - All variables/secrets above exist in the selected GitHub scope.
 - Repository/environment variables are owner-approved production values, not preview/test values such as `http://127.0.0.1:8080`, `hello@example.invalid`, `123 Local Test Way`, 555/masked phone numbers, or `Local test credential`. The workflow sets `EVOMTRS_REQUIRE_PRODUCTION_APPROVAL=1`, so these preview-only values fail before any Pages artifact upload.
+- If a production-looking build is rendered outside the approved Pages workflow while owner-pending placeholder values are still present, the renderer emits a neutral holding state with `noindex, nofollow` and `robots.txt` `Disallow: /` instead of public contact/intake/proof placeholders. Use `EVOMTRS_ALLOW_PREVIEW_PLACEHOLDERS=1` only for local preview evidence such as `npm run build:example` / `npm run verify:launch-local`.
 - The workflow file has been merged to the default branch.
 - Production hostname is confirmed. The user stated production is on GitHub Pages; `EVOMTRS_SITE_URL` should match the public Pages/custom domain.
 
